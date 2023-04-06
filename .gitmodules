@@ -1,0 +1,21 @@
+[submodule "external/mio"]
+	path = external/mio
+	url = https://github.com/mandreyel/mio.git
+[submodule "external/json"]
+	path = external/json
+	url = https://github.com/nlohmann/json.git
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "external/docopt"]
+	path = external/docopt
+	url = https://github.com/docopt/docopt.cpp.git
+[submodule "external/apple/libdispatch"]
+	path = external/apple/libdispatch
+	url = https://github.com/apple-oss-distributions/libdispatch.git
+[submodule "external/apple/AvailabilityVersions"]
+	path = external/apple/AvailabilityVersions
+	url = https://github.com/apple-oss-distributions/AvailabilityVersions.git
+[submodule "external/apple/xnu"]
+	path = external/apple/xnu
+	url = https://github.com/apple-oss-distributions/xnu.git
