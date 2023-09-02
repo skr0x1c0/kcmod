@@ -324,4 +324,8 @@ private:
 
 std::vector<uint32_t> build_hook_super_fn(uint32_t fn_instr, uint64_t fn_vmaddr, uint64_t super_fn_vmaddr);
 
+static inline bool is_bti_instr(uint32_t instr) {
+    return (instr & 0xffffff3f) == 0xd503241f;
+}
+
 }// namespace kcmod::aarch64

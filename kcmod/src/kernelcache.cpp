@@ -126,12 +126,21 @@ void KernelCache::bind_hooks(const KernelExtension &kext, const std::optional<st
         uint64_t hook_fn_kc_vmaddr = fileset_text_exec->vmaddr + hook_fn_segment_offset;
         uint64_t super_fn_kc_vmaddr = fileset_text_exec->vmaddr + super_fn_segment_offset;
 
-        SpanWriter fn_writer{data_, fn_segment->fileoff + fn_segment_offset};
-        uint32_t start_instr = *fn_writer.peek<uint32_t>();
         int64_t fn_offset = hook_fn_kc_vmaddr - fn_symbol.vmaddr;
+        SpanWriter fn_writer{data_, fn_segment->fileoff + fn_segment_offset};
+        if (aarch64::is_bti_instr(*fn_writer.peek<uint32_t>())) {
+            fn_writer.seek(4);
+            fn_offset -= 4;
+        }
+
+        uint32_t start_instr = *fn_writer.peek<uint32_t>();
         fn_writer.write(aarch64::Branch{fn_offset, false}.encode());
 
         SpanWriter super_fn_writer {data_, fileset_text_exec->fileoff + super_fn_segment_offset};
+        if (aarch64::is_bti_instr(*super_fn_writer.peek<uint32_t>())) {
+            super_fn_writer.seek(4);
+        }
+
         for (uint32_t instr: aarch64::build_hook_super_fn(
                  start_instr, fn_symbol.vmaddr, super_fn_kc_vmaddr)) {
             kcmod_verify(*super_fn_writer.peek<uint32_t>() == 0xd4200020); // brk instruction
