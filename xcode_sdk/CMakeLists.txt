@@ -1,3 +1,8 @@
+cmake_minimum_required(VERSION 3.25)
+project(kcmod_xcode_sdk)
+
+set(CMAKE_CXX_STANDARD 20)
+
 macro(find_xcode_sdk var name)
     set(result_code)
     execute_process(
@@ -42,7 +47,6 @@ macro(build_internal_sdk name)
 
     add_custom_target(
             ${TARGET_NAME}_clone
-            COMMAND ${CMAKE_COMMAND} -E remove_directory "${INTERNAL_SDK}"
             COMMAND ditto "${BASE_SDK}" "${INTERNAL_SDK}"
             COMMAND plutil -replace "DisplayName" -string "${INTERNAL_SDK_NAME}" "${INTERNAL_SDK}/SDKSettings.plist"
             COMMAND plutil -replace "CanonicalName" -string "${INTERNAL_SDK_NAME}" "${INTERNAL_SDK}/SDKSettings.plist"
