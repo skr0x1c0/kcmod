@@ -20,7 +20,7 @@ macro(find_xcode_sdk var name)
     endif ()
 endmacro()
 
-set(MACOS_SOURCE_DIR "${PROJECT_SOURCE_DIR}/external/apple")
+set(MACOS_SOURCE_DIR "${PROJECT_SOURCE_DIR}/../external/apple")
 set(AVAILABILITY_VERSIONS_SOURCE_DIR "${MACOS_SOURCE_DIR}/AvailabilityVersions")
 set(LIBDISPATCH_SOURCE_DIR "${MACOS_SOURCE_DIR}/libdispatch")
 set(XNU_SOURCE_DIR "${MACOS_SOURCE_DIR}/xnu")
