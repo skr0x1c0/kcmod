@@ -77,4 +77,4 @@ The `ikext` will be saved in `example_kext/example_kext_ios.ikext`
     zip iPhone14\,4_16.4.1_20E252_Restore_new.ipsw kernelcache.research.iphone14
     ``` 
 
-Now you can flash the `iPhone14,4_16.4.1_20E252_Restore_new.ipsw` firmware using `srdutil` to your `iPhone 14 SRD`
+Now you can flash the `iPhone14,4_16.4.1_20E252_Restore_new.ipsw` firmware using `srdutil` to your `iPhone 13 SRD`
