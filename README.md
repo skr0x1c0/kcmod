@@ -32,9 +32,19 @@ kcmod replace com.apple.nke.l2tp --kernelcache <path-to-kc> --kext <path-to-ikex
 
 ## Overriding functions in kernelcache
 
-When you link a kext using `kcmod replace` command, the utility will look for functions inside kext with names starting with `__kcmod_hook_`.
+Consider that you want to override the function `sample_fn` inside the kernelcache. To override this function, you need to build a kext with following code and link it with the kernelcache using `kcmod replace` command.
 
-When it encounters a function with a name like `__kcmod_hook_override_sample_fn`, it will look for function with name `sample_fn` inside the kernelcache and replace the first instruction in `sample_fn` with an unconditional branch instruction `b #imm`. The value of `imm` will be set such that program counter will jump to `__kcmod_hook_override_sample_fn` method effectively overriding the `sample_fn`. 
+``` c
+#include <kcmod/kcmod.h>
+
+KCMOD_OVERRIDE(void, sample_fn, void) {
+    // overriding code
+    ...
+}
+```
+
+
+The macro `KCMOD_OVERRIDE` will create two functions, one with name `__kcmod_hook_override_sample_fn` containing the code of overriding function and other with name `__kcmod_hook_super_sample_fn` containing four `brk #1` instructions. When you link this kext using `kcmod replace` command, the utility will look for function with name `sample_fn` inside the kernelcache and replace the first instruction in `sample_fn` with an unconditional branch instruction `b #imm`. The value of `imm` will be set such that program counter will jump to `__kcmod_hook_override_sample_fn` method effectively overriding the `sample_fn`. 
 
 original `sample_fn`:
 ``` assembly
@@ -44,7 +54,7 @@ original `sample_fn`:
 ...
 ``` 
 
-new `sample_fn`:
+`sample_fn` modified by `kcmod`:
 ``` assembly
 0x4000     b 0x4200  # __kcmod_hook_override_sample_fn
 0x4004     orig_sample_fn_instr_1
@@ -60,7 +70,7 @@ override function `__kcmod_hook_override_sample_fn`:
 ```
 
 
-When you need to execute code in the original `sample_fn` you must also define a method named `__kcmod_hook_super_sample_fn`. The `kcmod replace` command will fill this function with relocated original first instruction in `sample_fn` and an unconditional branch instruction for setting the program counter to second instruction in `sample_fn`
+When you need to execute code in the original `sample_fn` you can use the `KCMOD_SUPER` macro. This macro will just pass the provided arguments down to `__kcmod_hook_super_sample_fn`. The `kcmod replace` command will fill the `__kcmod_hook_super_sample_fn` function with relocated original first instruction of `sample_fn` and an unconditional branch instruction for setting the program counter to second instruction in `sample_fn`
 
 override function `__kcmod_hook_override_sample_fn` which calls original `sample_fn`:
 ``` assembly
@@ -78,20 +88,8 @@ super function `__kcmod_hook_super_sample_fn`:
 0x410b     brk #1
 ```
 
+The macros `KCMOD_OVERRIDE` and `KCMOD_SUPER` are defined in header file `kext/libs/kcmod_hooks/include/kcmod/kcmod.h`.
 
-The macros `KCMOD_OVERRIDE` and `KCMOD_SUPER` can be used for easily creating these override and super functions. These macros are defined in header file `kext/libs/kcmod_hooks/include/kcmod/kcmod.h`.
-
-For example, to override the function `mac_policy_register` in the kernelcache, build a kext with following code and use `kcmod replace` command to link the kext with the kernelcache
-
-``` c
-#include <kcmod/kcmod.h>
-
-KCMOD_OVERRIDE(int, mac_policy_register, struct mac_policy_conf* conf, mac_policy_handle_t* handlep, void* xd) {
-    IOLog("mac_policy_register override: %s\n", conf->mpc_name);
-    return KCMOD_SUPER(mac_policy_register, conf, handlep, xd);
-}
-```
 
 For a complete example see [`kext/example_kext`](kext/example_kext)
-
 
