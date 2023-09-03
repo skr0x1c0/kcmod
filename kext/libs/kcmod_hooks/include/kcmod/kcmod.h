@@ -15,3 +15,6 @@
             "brk 1\n");                                                       \
     }                                                                         \
     return_type __kcmod_hook_override_##fn(__VA_ARGS__)
+
+
+#define KCMOD_SUPER(fn, ...) __kcmod_hook_super_##fn(__VA_ARGS__)

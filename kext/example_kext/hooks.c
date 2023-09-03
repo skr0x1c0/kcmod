@@ -2,28 +2,23 @@
 // Created by Sreejith Krishnan R on 01/03/23.
 //
 
-#include <string.h>
-
-#include <mach/arm/boolean.h>
+#include <sys/kernel_types.h>
 #include <pexpert/pexpert.h>
+#include <security/mac_policy.h>
+#include <IOKit/IOLib.h>
 
 #include <kcmod/kcmod.h>
 
 
-KCMOD_OVERRIDE(boolean_t, PE_parse_boot_argn, const char* arg_string, void *buf, int buf_size) {
-    if (strcmp(arg_string, "serial") == 0) {
-        kprintf("PE_parse_boot_argn serial override");
-        *(int *)buf = 3;
-        return 1;
-    }
-    return __kcmod_hook_super_PE_parse_boot_argn(arg_string, buf, buf_size);
-}
-
-KCMOD_OVERRIDE(boolean_t, PE_parse_boot_argn_internal, char* args, const char* arg_string, void *buf, int buf_size, bool force) {
-    if (strcmp(arg_string, "serial") == 0) {
-        kprintf("PE_parse_boot_argn_internal serial override");
-        *(int *)buf = 3;
-        return 1;
-    }
-    return __kcmod_hook_override_PE_parse_boot_argn_internal(args, arg_string, buf, buf_size, force);
+KCMOD_OVERRIDE(int, mac_policy_register, struct mac_policy_conf* conf, mac_policy_handle_t* handlep, void* xd) {
+    IOLog("***********************************\n");
+    IOLog("***********************************\n");
+    IOLog("***********************************\n");
+    IOLog("***********************************\n");
+    IOLog("mac_policy_register override: %s\n", conf->mpc_name);
+    IOLog("***********************************\n");
+    IOLog("***********************************\n");
+    IOLog("***********************************\n");
+    IOLog("***********************************\n");
+    return KCMOD_SUPER(mac_policy_register, conf, handlep, xd);
 }
