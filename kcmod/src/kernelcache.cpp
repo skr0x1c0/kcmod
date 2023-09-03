@@ -139,6 +139,7 @@ void KernelCache::bind_hooks(const KernelExtension &kext, const std::optional<st
         SpanWriter super_fn_writer {data_, fileset_text_exec->fileoff + super_fn_segment_offset};
         if (aarch64::is_bti_instr(*super_fn_writer.peek<uint32_t>())) {
             super_fn_writer.seek(4);
+            super_fn_kc_vmaddr += 4;
         }
 
         for (uint32_t instr: aarch64::build_hook_super_fn(
