@@ -3,6 +3,8 @@ project(kcmod)
 
 set(CMAKE_CXX_STANDARD 20)
 
+add_subdirectory(../external ${CMAKE_CURRENT_BINARY_DIR}/external)
+
 set(CXX_HEADERS
         include/kcmod/aarch64.h
         include/kcmod/common.h
