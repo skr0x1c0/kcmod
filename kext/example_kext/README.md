@@ -8,7 +8,7 @@ The example kext demonstrates two main capabilities of `kcmod`, overriding funct
 
 The default iPhoneOS SDK provided with Xcode does not have the header files and libraries required for building a kernel extension for the iPhone. To build a SDK capable of this, follow below steps
 
-1. Using finder go to `/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform//Developer/SDKs` and create a directory named `iphoneos.internal.sdk`. (Required because by default, terminal is not allowed to create directories inside `/Applications/Xcode.app`).
+1. Make sure `Terminal.app` have Full Disk Access (Settings / Privacy & Security / Full Disk Access).
 2. Using terminal, execute the following commands
     ``` sh
     cd <project-root-dir>/xcode_sdk
@@ -26,7 +26,7 @@ The kernelcache extracted from an `ipsw` file will be in `img4` format. `kcmod` 
 ``` sh
 git clone --recurse-submodules https://github.com/pinauten/img4lib
 cd img4lib
-make
+COMMONCRYPTO=1 make
 sudo cp img4 /usr/local/bin/
 ```
 
@@ -52,12 +52,12 @@ The `ikext` will be saved in `example_kext/example_kext_ios.ikext`
 1. Download the `ipsw` file for your SRD device from this [URL](https://github.com/apple/security-research-device/wiki/2.-Installing-System-Versions). In this example we will use `iPhoneOS 16.4.1` ipsw for `iPhone 13 SRD`.
 
     ``` sh
-    wget https://updates.cdn-apple.com/2023SpringFCS/fullrestores/032-71284/CF85AC1F-2DC7-4D1C-8221-0837335100A9/iPhone14,4_16.4.1_20E252_Restore.ipsw
+    wget "https://updates.cdn-apple.com/2023SpringFCS/fullrestores/032-71284/CF85AC1F-2DC7-4D1C-8221-0837335100A9/iPhone14,4_16.4.1_20E252_Restore.ipsw"
     ```
 
 2. Extract the research kernelcache in `img4` format and convert it to Mach-O format
     ``` sh
-    unzip -j iPhone14,4_16.4.1_20E252_Restore.ipsw kernelcache.research.iphone14
+    unzip -j iPhone14\,4_16.4.1_20E252_Restore.ipsw kernelcache.research.iphone14
     img4 -i kernelcache.research.iphone14 -o kernelcache.research.iphone14.macho
     ```
 
@@ -73,8 +73,8 @@ The `ikext` will be saved in `example_kext/example_kext_ios.ikext`
 
 5. Build the `ipsw` with new kernelcache
     ``` sh
-    cp iPhone14,4_16.4.1_20E252_Restore.ipsw iPhone14,4_16.4.1_20E252_Restore_new.ipsw
-    zip iPhone14,4_16.4.1_20E252_Restore_new.ipsw kernelcache.research.iphone14
+    cp iPhone14\,4_16.4.1_20E252_Restore.ipsw iPhone14\,4_16.4.1_20E252_Restore_new.ipsw
+    zip iPhone14\,4_16.4.1_20E252_Restore_new.ipsw kernelcache.research.iphone14
     ``` 
 
 Now you can flash the `iPhone14,4_16.4.1_20E252_Restore_new.ipsw` firmware using `srdutil` to your `iPhone 14 SRD`

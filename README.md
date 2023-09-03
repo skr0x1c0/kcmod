@@ -11,7 +11,7 @@ mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 make -j kcmod
-sudo cp kcmod/kcmod /usr/local/bin/
+sudo cp kcmod /usr/local/bin/
 ```
 
 
