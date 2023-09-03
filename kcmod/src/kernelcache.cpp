@@ -443,10 +443,20 @@ void KernelCache::apply_split_segment_fixups(const std::string &fileset, const K
                 uint64_t to_addr = fileset_to_section->addr + entry.to_section_offset;
                 uint64_t offset = to_addr & 0xfffLL;
                 auto* instr_raw = instr_reader.read<uint32_t>();
-                aarch64::AddImm instr{*instr_raw};
-                instr.set_imm(offset);
-                *instr_raw = instr.encode();
-                break;
+                
+                if (auto instr = aarch64::parse_instr<aarch64::AddImm>(*instr_raw)) {
+                    instr->set_imm(offset);
+                    *instr_raw = instr->encode();
+                    break;
+                }
+
+                if (auto instr = aarch64::parse_instr<aarch64::LdrImmediate>(*instr_raw)) {
+                    instr->set_imm(offset);
+                    *instr_raw = instr->encode();
+                    break;
+                }
+
+                kcmod_todo();
             }
             case DyldCacheAdjV2Kind::Pointer64:
             case DyldCacheAdjV2Kind::ThreadedPointer64: {

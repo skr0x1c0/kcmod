@@ -322,6 +322,56 @@ private:
     } i_;
 };
 
+
+struct LdrImmediate {
+    static constexpr auto k_max_imm = 32760;
+
+    LdrImmediate(uint32_t instr) {
+        i_.raw = instr;
+        kcmod_aarch64_verify(i_.opc == 0b01);
+        kcmod_aarch64_verify(i_.op1 == 0b111001);
+        kcmod_aarch64_verify(i_.size == 0b11); // 64-bit only
+    }
+
+    uint32_t encode() {
+        return i_.raw;
+    }
+
+    uint64_t imm() {
+        return (uint64_t)i_.imm12 << 3;
+    }
+
+    void set_imm(uint64_t offset) {
+        kcmod_aarch64_verify(offset < k_max_imm);
+        kcmod_aarch64_verify(offset % 8 == 0);
+        i_.imm12 = offset >> 3;
+    }
+
+private:
+    union {
+        struct {
+            uint32_t
+                rt: 5,
+                rn: 5,
+                imm12: 12,
+                opc: 2,
+                op1: 6,
+                size: 2;
+        };
+        uint32_t raw;
+    } i_;
+};
+
+
+template <class T> std::optional<T> parse_instr(uint32_t raw_instr) {
+    try {
+        T instr{raw_instr};
+        return instr;
+    } catch (const BadInstruction&) {
+        return std::nullopt;
+    }
+}
+
 std::vector<uint32_t> build_hook_super_fn(uint32_t fn_instr, uint64_t fn_vmaddr, uint64_t super_fn_vmaddr);
 
 static inline bool is_bti_instr(uint32_t instr) {
