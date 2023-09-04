@@ -1,6 +1,6 @@
 # Example kext
 
-The example kext demonstrates two main capabilities of `kcmod`, overriding functions (see [hooks.c](./hooks.c)) and linking kext (see [main.c](./main.c)) with an existing kernelcache. To build and install the example kext on your Apple SRD, follow the documentation below.
+The example kext demonstrates two main capabilities of `kcmod`, overriding functions (see [hooks.c](./hooks.c)) and linking kext (see [main.c](./main.c)) with an existing kernelcache. To build and install the example kext for your Apple SRD, follow the documentation below.
 
 # Prerequisites
 
